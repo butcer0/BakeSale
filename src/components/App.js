@@ -8,10 +8,12 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import ajax from '../ajax';
 import DealList from './DealList';
+import DealDetail from './DealDetail';
 
 class App extends Component {
   state = {
     deals: [],
+    currentDealId: null,
   }
   async componentDidMount() {
     const deals = await ajax.fetchInitialDeals();
@@ -22,17 +24,30 @@ class App extends Component {
     //   return { deals };
     // });
   }
-  render() {
-    return (
-      <View style={styles.container}>
-        {
-          this.state.deals.length > 0
-            ?  (<DealList deals={this.state.deals} />)
-            : (<Text style={styles.header}>Welcome to BakeSale!</Text>)
-        }
-      </View>
-    );
+setCurrentDeal = (dealId) => {
+  this.setState({
+    currentDealId: dealId
+  });
+};
+currentDeal = () => {
+  return this.state.deals.find(
+    (deal) => deal.key === this.state.currentDealId
+  );
+};
+
+render() {
+  if(this.state.currentDealId) {
+    return <DealDetail initialDealData={this.currentDeal()} />;
   }
+  if (this.state.deals.length > 0){
+    return <DealList deals={this.state.deals} onItemPress={this.setCurrentDeal}/>;
+  }
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Welcome to BakeSale!</Text>
+    </View>
+  );
+}
 }
 
 const styles = StyleSheet.create({
