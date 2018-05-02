@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image  } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity  } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { priceDisplay } from '../util';
@@ -10,6 +10,7 @@ class DealDetail extends Component {
     initialDealData: PropTypes.object.isRequired,
     //Erik - 5/2/2018 PropTypes.Shape would be more specific
     // deal: PropTypes.shape.isRequired,
+    onBack: PropTypes.func.isRequired,
   };
   
   state = {
@@ -30,6 +31,9 @@ class DealDetail extends Component {
     const { deal } = this.state;
     return (
       <View style={styles.deal}>
+        <TouchableOpacity onPress={this.props.onBack}>
+          <Text style={styles.backLink}>Back</Text>
+        </TouchableOpacity>
         <Image source={{ uri: deal.media[0] }} style={styles.image} />
         <View style={styles.detail}>
           <View>
@@ -60,8 +64,10 @@ const styles = StyleSheet.create({
   deal: {
     marginHorizontal: 12,
     marginTop: 50,
-    borderColor: '#bbb',
-    borderWidth: 1,
+  },
+  backLink: {
+    marginBottom: 5,
+    color: '#22f',
   },
   image: {
     width: '100%',
@@ -69,6 +75,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   detail: {
+    borderColor: '#bbb',
+    borderWidth: 1,
   },
   title: {
     fontSize: 16,

@@ -34,10 +34,12 @@ currentDeal = () => {
     (deal) => deal.key === this.state.currentDealId
   );
 };
-
+unsetCurrentDeal = () => {
+  this.setState({currentDealId: null});
+};
 render() {
   if(this.state.currentDealId) {
-    return <DealDetail initialDealData={this.currentDeal()} />;
+    return <DealDetail initialDealData={this.currentDeal()}  onBack={this.unsetCurrentDeal}/>;
   }
   if (this.state.deals.length > 0){
     return <DealList deals={this.state.deals} onItemPress={this.setCurrentDeal}/>;
