@@ -15,9 +15,12 @@ class App extends Component {
   }
   async componentDidMount() {
     const deals = await ajax.fetchInitialDeals();
-    this.setState(() => {
-      return { deals };
-    });
+    //Erik - 5/2/2018 This 'performs a shallow merge of state'
+    this.setState({ deals });
+    //Erik - 5/2/2018 Can be simplified since not using prevState
+    // this.setState((prevState) => {
+    //   return { deals };
+    // });
   }
   render() {
     return (
