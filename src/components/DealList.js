@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text,  } from 'react-native';
+import { StyleSheet, View, FlatList  } from 'react-native';
 import PropTypes from 'prop-types';
+import DealItem from './DealItem';
 
 class DealList extends Component {
   static propTypes = {
     deals: PropTypes.array.isRequired,
-
-  }
+  };
   
   render() {
     return (
       <View style={styles.list}>
-        {this.props.deals.map((deal) =>
-          <Text key={deal.key}>{deal.title}</Text>
-        )}
+        <FlatList
+          data={this.props.deals}
+          renderItem={({item}) => <DealItem deal={item} />}
+        />
       </View>
     );
   }
