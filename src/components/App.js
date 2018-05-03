@@ -58,7 +58,10 @@ render() {
       </View>
     );
   }
-  const dealsToDisplay = this.state.dealsFromSearch.length > 0 ? this.state.dealsFromSearch : this.state.deals;
+  const dealsToDisplay = 
+    this.state.dealsFromSearch.length > 0 
+      ? this.state.dealsFromSearch 
+      : this.state.deals;
   if (dealsToDisplay.length > 0){
     return (  
       <View style={styles.main}>
