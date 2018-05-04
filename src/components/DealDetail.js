@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, PanResponder, Animated, Dimensions  } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, PanResponder, Animated, Dimensions, ScrollView  } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { priceDisplay } from '../util';
@@ -135,7 +135,7 @@ class DealDetail extends Component {
   render() {
     const { deal } = this.state;
     return (
-      <View style={styles.deal}>
+      <ScrollView contentContainerStyle={styles.deal}>
         <TouchableOpacity onPress={this.props.onBack}>
           <Text style={styles.backLink}>Back</Text>
         </TouchableOpacity>
@@ -165,6 +165,10 @@ class DealDetail extends Component {
                 <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
                 <Text>{deal.user.name}</Text>
               </View>
+            // <View style={styles.user}>
+              //   <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
+              //   <Text>{deal.user.name}</Text>
+              // </View>
             )}
           </View>
           <View style={styles.description}>
@@ -192,7 +196,7 @@ class DealDetail extends Component {
             <Text>{deal.description}</Text>
           </View>
         </View> */}
-      </View>
+      </ScrollView>
     );
   }
 }
