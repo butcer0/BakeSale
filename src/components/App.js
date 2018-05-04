@@ -103,9 +103,10 @@ render() {
   }
 
   return (
-    <Animated.View style={[{ left: this.titleXPosition }, styles.container]}>
-      <Text style={styles.header}>BakeSale</Text>
-    </Animated.View>
+    <View />
+    // <Animated.View style={[{ left: this.titleXPosition }, styles.container]}>
+    //   <Text style={styles.header}>BakeSale</Text>
+    // </Animated.View>
   );
 }
 }
