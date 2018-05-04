@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View, Animated } from 'react-native';
+import { Platform, StyleSheet, Text, View, Animated, Easing, Dimensions } from 'react-native';
 import ajax from '../ajax';
 import DealList from './DealList';
 import DealDetail from './DealDetail';
@@ -15,10 +15,18 @@ class App extends Component {
   };
 
   animateTitle = (direction = 1) => {
-    Animated.spring(
-      this.titleXPosition,
-      { toValue: direction * 100 }
+    const width = Dimensions.get('window').width - 152;
+    Animated.timing(
+      this.titleXPosition, { 
+        toValue: direction * (width / 2)
+        , duration: 1000
+        , easing: Easing.sin }
     ).start(() => {this.animateTitle(-1 * direction); });
+    //Erik - 5/4/2018 Changed to Timing for smoother transition
+    // Animated.spring(
+    //   this.titleXPosition,
+    //   { toValue: direction * 100 }
+    // ).start(() => {this.animateTitle(-1 * direction); });
   };
 
   async componentDidMount() {
