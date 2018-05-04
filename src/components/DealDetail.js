@@ -180,6 +180,9 @@ class DealDetail extends Component {
 }
 
 const styles = StyleSheet.create({
+  deal: {
+    backgroundColor: 'white',
+  },
   backLink: {
     marginBottom: 5,
     color: '#22f',
