@@ -15,7 +15,7 @@ class App extends Component {
   };
 
   animateTitle = (direction = 1) => {
-    const width = Dimensions.get('window').width - 152;
+    const width = Dimensions.get('window').width - 158;
     Animated.timing(
       this.titleXPosition, { 
         toValue: direction * (width / 2)
@@ -31,10 +31,9 @@ class App extends Component {
 
   async componentDidMount() {
     this.animateTitle();
-
-    // const deals = await ajax.fetchInitialDeals();
-    // //Erik - 5/2/2018 This 'performs a shallow merge of state'
-    // this.setState({ deals });
+    const deals = await ajax.fetchInitialDeals();
+    //Erik - 5/2/2018 This 'performs a shallow merge of state'
+    this.setState({ deals });
   }
 searchDeals = async (searchTerm) => {
   console.log('searchDeals called: ' + searchTerm);
