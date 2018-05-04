@@ -1,5 +1,17 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, PanResponder, Animated, Dimensions, ScrollView  } from 'react-native';
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  Image, 
+  TouchableOpacity, 
+  PanResponder, 
+  Animated, 
+  Dimensions, 
+  ScrollView,
+  Button,
+  Linking
+} from 'react-native';
 import PropTypes from 'prop-types';
 
 import { priceDisplay } from '../util';
@@ -131,6 +143,10 @@ class DealDetail extends Component {
     const fullDeal = await ajax.fetchDealDetail(this.state.deal.key);
     this.setState({deal: fullDeal,});
   }
+
+  openDealUrl = () => {
+    Linking.openURL(this.state.deal.url);
+  }
    
   render() {
     const { deal } = this.state;
@@ -174,6 +190,13 @@ class DealDetail extends Component {
           <View style={styles.description}>
             <Text>{deal.description}</Text>
           </View>
+          <View style={styles.buyNow}>
+            <Button 
+              title="Buy this deal!" 
+              onPress={this.openDealUrl}
+            />
+          </View>
+         
         </Animated.View>
      
         {/* <View style={styles.detail}>
@@ -248,6 +271,9 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
   },
+  buyNow: {
+    marginHorizontal: '30%',
+  }
 });
 
 export default DealDetail;
