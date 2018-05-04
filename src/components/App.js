@@ -1,30 +1,32 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, Animated } from 'react-native';
 import ajax from '../ajax';
 import DealList from './DealList';
 import DealDetail from './DealDetail';
 import SearchBar from './SearchBar';
 
 class App extends Component {
+  //Erik - 5/4/2018 This will represent relative value
+  titleXPosition = new Animated.Value(0);
   state = {
     deals: [],
     dealsFromSearch:[],
     currentDealId: null,
-  }
+  };
+
+  animateTitle = (direction = 1) => {
+    Animated.spring(
+      this.titleXPosition,
+      { toValue: direction * 100 }
+    ).start(() => {this.animateTitle(-1 * direction); });
+  };
+
   async componentDidMount() {
-    const deals = await ajax.fetchInitialDeals();
-    //Erik - 5/2/2018 This 'performs a shallow merge of state'
-    this.setState({ deals });
-    //Erik - 5/2/2018 Can be simplified since not using prevState
-    // this.setState((prevState) => {
-    //   return { deals };
-    // });
+    this.animateTitle();
+
+    // const deals = await ajax.fetchInitialDeals();
+    // //Erik - 5/2/2018 This 'performs a shallow merge of state'
+    // this.setState({ deals });
   }
 searchDeals = async (searchTerm) => {
   console.log('searchDeals called: ' + searchTerm);
@@ -69,18 +71,15 @@ render() {
         <DealList deals={dealsToDisplay} onItemPress={this.setCurrentDeal}/>
       </View>);
   }
-  //Erik - 5/3/2018 Depricated - Use dealsToDisplay to dynamically show search results
-  // if (this.state.deals.length > 0){
-  //   return (  
-  //     <View style={styles.main}>
-  //       <SearchBar searchDeals={this.searchDeals}/>
-  //       <DealList deals={this.state.deals} onItemPress={this.setCurrentDeal}/>
-  //     </View>);
-  // }
+ 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[{ left: this.titleXPosition }, styles.container]}>
       <Text style={styles.header}>BakeSale</Text>
-    </View>
+    </Animated.View>
+    //Erik - 5/4/2018 Animated Text
+    // <View style={styles.container}>
+    //   <Text style={styles.header}>BakeSale</Text>
+    // </View>
   );
 }
 }
@@ -93,7 +92,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   main: {
-    // marginTop: 30,
     //Erik - 5/3/2018 If 'ios' then 30, otherwise if 'android' 10
     marginTop: Platform.OS === 'ios' ? 30 : 10,
   },

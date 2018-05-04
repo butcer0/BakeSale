@@ -19,14 +19,9 @@ class DealDetail extends Component {
 
   async componentDidMount() {
     const fullDeal = await ajax.fetchDealDetail(this.state.deal.key);
-    
     this.setState({deal: fullDeal,});
   }
-  //Erik - 5/2/2018 Alternative way to write method
-  // componentDidMount = async() => {
-  //   await ajax.fetchDealDetail(this.state.deal.key);
-  // };
-  
+   
   render() {
     const { deal } = this.state;
     return (
@@ -61,23 +56,15 @@ class DealDetail extends Component {
 }
 
 const styles = StyleSheet.create({
-  deal: {
-    marginHorizontal: 12,
-    //Erik - 5/3/2018 Now coming from main style in App.js
-    // marginTop: 50,
-  },
   backLink: {
     marginBottom: 5,
     color: '#22f',
+    marginLeft: 10,
   },
   image: {
     width: '100%',
     height: 150,
     backgroundColor: '#ccc',
-  },
-  detail: {
-    borderColor: '#bbb',
-    borderWidth: 1,
   },
   title: {
     fontSize: 16,
