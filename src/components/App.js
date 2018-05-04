@@ -12,6 +12,7 @@ class App extends Component {
     deals: [],
     dealsFromSearch:[],
     currentDealId: null,
+    activeSearchTerm: '',
   };
 
   animateTitle = (direction = 1) => {
@@ -29,11 +30,6 @@ class App extends Component {
         this.animateTitle(-1 * direction); 
       }
     });
-    //Erik - 5/4/2018 Changed to Timing for smoother transition
-    // Animated.spring(
-    //   this.titleXPosition,
-    //   { toValue: direction * 100 }
-    // ).start(() => {this.animateTitle(-1 * direction); });
   };
 
   async componentDidMount() {
@@ -43,13 +39,11 @@ class App extends Component {
     this.setState({ deals });
   }
 searchDeals = async (searchTerm) => {
-  console.log('searchDeals called: ' + searchTerm);
-  
   let dealsFromSearch = [];
   if(searchTerm) {
     dealsFromSearch = await ajax.fetchDealsSearchResults(searchTerm);
   }
-  this.setState({ dealsFromSearch });
+  this.setState({ dealsFromSearch, activeSearchTerm: searchTerm });
 }
 
 setCurrentDeal = (dealId) => {
@@ -103,19 +97,15 @@ render() {
   if (dealsToDisplay.length > 0){
     return (  
       <View style={styles.main}>
-        <SearchBar searchDeals={this.searchDeals}/>
+        <SearchBar searchDeals={this.searchDeals} initialSearchTerm={this.state.activeSearchTerm}/>
         <DealList deals={dealsToDisplay} onItemPress={this.setCurrentDeal}/>
       </View>);
   }
- 
+
   return (
     <Animated.View style={[{ left: this.titleXPosition }, styles.container]}>
       <Text style={styles.header}>BakeSale</Text>
     </Animated.View>
-    //Erik - 5/4/2018 Animated Text
-    // <View style={styles.container}>
-    //   <Text style={styles.header}>BakeSale</Text>
-    // </View>
   );
 }
 }
