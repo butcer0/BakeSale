@@ -5,8 +5,11 @@ import PropTypes from 'prop-types';
 import { priceDisplay } from '../util';
 import ajax from '../ajax';
 
+const SWIPE_THRESHOLD = 0.4;
+
 class DealDetail extends Component {
   imageXPosition = new Animated.Value(0);
+  width = 0;
   imagePanResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gs) => {
@@ -14,18 +17,22 @@ class DealDetail extends Component {
       // console.log('Moving', gs.dx);
     },
     onPanResponderRelease: (evt, gs) => {
-      const width = Dimensions.get('window').width;      
-      if(Math.abs(gs.dx) > width * 0.4)
+      this.width = Dimensions.get('window').width;      
+      if(Math.abs(gs.dx) > this.width * SWIPE_THRESHOLD)
       {
       // Swipe left or right
         const direction = Math.sign(gs.dx);
         // -1 for left, 1 for right
         Animated.timing(this.imageXPosition, {
-          toValue: direction * width,
+          toValue: direction * this.width,
           duration: 250,
+        }).start(() => this.handleSwipe(-1 * direction));
+      } else {
+        Animated.spring(this.imageXPosition, {
+          toValue: 0,
         }).start();
       }
-      
+
       // if(gs.dx < -1 * width * 0.4)
       // {
       // // Swipe left
@@ -38,6 +45,26 @@ class DealDetail extends Component {
       // console.log('Released', gs.dx);
     },
   });
+
+  handleSwipe = (indexDirection) => {
+    if (!this.state.deal.media[this.state.imageIndex + indexDirection]) {
+      Animated.spring(this.imageXPosition, {
+        toValue: 0,
+      }).start();
+      return;
+    }
+    this.setState((prevState) => ({ 
+      imageIndex: prevState.imageIndex + indexDirection
+    }), () => {
+      // Next image animation
+      this.imageXPosition.setValue(indexDirection * this.width);
+      Animated.spring(this.imageXPosition, {
+        toValue: 0,
+      }).start();
+    });
+    
+  }
+
   static propTypes = {
     initialDealData: PropTypes.object.isRequired,
     //Erik - 5/2/2018 PropTypes.Shape would be more specific
