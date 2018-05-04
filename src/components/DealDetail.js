@@ -42,7 +42,6 @@ class DealDetail extends Component {
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gs) => {
       this.imageXPosition.setValue(gs.dx);
-      // console.log('Moving', gs.dx);
     },
     onPanResponderRelease: (evt, gs) => {
       this.width = Dimensions.get('window').width;      
@@ -60,17 +59,6 @@ class DealDetail extends Component {
           toValue: 0,
         }).start();
       }
-
-      // if(gs.dx < -1 * width * 0.4)
-      // {
-      // // Swipe left
-      //   Animated.timing(this.imageXPosition, {
-      //     toValue: -1 * width,
-      //     duration: 250,
-      //   }).start();
-      // }
-      
-      // console.log('Released', gs.dx);
     },
   });
 
@@ -97,10 +85,8 @@ class DealDetail extends Component {
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gs) => {
       this.detailXPosition.setValue(gs.dx * SWIPE_DETAIL_ELASTICITY);
-      // console.log('Moving', gs.dx);
     },
     onPanResponderRelease: (evt, gs) => {
-      console.log('Detail Released');
       this.width = Dimensions.get('window').width;      
       if(Math.abs(gs.dx) > this.width * SWIPE_THRESHOLD)
       {
@@ -122,7 +108,6 @@ class DealDetail extends Component {
   });
 
   handleDetailSwipe = (indexDirection) => {
-    console.log('handle Detail Swipe Called: ' + indexDirection);
     if(this.props.onSwipe(indexDirection) === this.state.deal.key)
     {
       Animated.spring(this.detailXPosition, {
@@ -130,7 +115,7 @@ class DealDetail extends Component {
       }).start();
       return;
     } else {
-      // Next image animation
+      // Next deal animation
       this.detailXPosition.setValue(indexDirection * this.width);
       Animated.spring(this.detailXPosition, {
         toValue: 0,
@@ -160,11 +145,6 @@ class DealDetail extends Component {
           {...this.imagePanResponder.panHandlers}
           source={{ uri: deal.media[this.state.imageIndex] }} 
           style={[{ left: this.imageXPosition}, styles.image]} />
-        {/* <Image 
-          //Erik - 5/4/2018 This means spread the panHandlers (callback methods) in component
-          {...this.imagePanResponder.panHandlers}
-          source={{ uri: deal.media[this.state.imageIndex] }} 
-          style={styles.image} /> */}
         <Animated.View 
           {...this.detailPanResponder.panHandlers}
           style={[{ left: this.detailXPosition}, styles.detail]} >
@@ -181,10 +161,6 @@ class DealDetail extends Component {
                 <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
                 <Text>{deal.user.name}</Text>
               </View>
-            // <View style={styles.user}>
-              //   <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
-              //   <Text>{deal.user.name}</Text>
-              // </View>
             )}
           </View>
           <View style={styles.description}>
@@ -198,27 +174,6 @@ class DealDetail extends Component {
           </View>
          
         </Animated.View>
-     
-        {/* <View style={styles.detail}>
-          <View>
-            <Text style={styles.title}>{deal.title}</Text>
-          </View>
-          <View style={styles.footer}>
-            <View style={styles.info}>
-              <Text style={styles.price}>{priceDisplay(deal.price)}</Text>
-              <Text style={styles.cause}>{deal.cause.name}</Text>
-            </View>
-            {deal.user &&(
-              <View style={styles.user}>
-                <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
-                <Text>{deal.user.name}</Text>
-              </View>
-            )}
-          </View>
-          <View style={styles.description}>
-            <Text>{deal.description}</Text>
-          </View>
-        </View> */}
       </ScrollView>
     );
   }
