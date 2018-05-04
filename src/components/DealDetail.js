@@ -1,11 +1,43 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity  } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, PanResponder, Animated, Dimensions  } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { priceDisplay } from '../util';
 import ajax from '../ajax';
 
 class DealDetail extends Component {
+  imageXPosition = new Animated.Value(0);
+  imagePanResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gs) => {
+      this.imageXPosition.setValue(gs.dx);
+      // console.log('Moving', gs.dx);
+    },
+    onPanResponderRelease: (evt, gs) => {
+      const width = Dimensions.get('window').width;      
+      if(Math.abs(gs.dx) > width * 0.4)
+      {
+      // Swipe left or right
+        const direction = Math.sign(gs.dx);
+        // -1 for left, 1 for right
+        Animated.timing(this.imageXPosition, {
+          toValue: direction * width,
+          duration: 250,
+        }).start();
+      }
+      
+      // if(gs.dx < -1 * width * 0.4)
+      // {
+      // // Swipe left
+      //   Animated.timing(this.imageXPosition, {
+      //     toValue: -1 * width,
+      //     duration: 250,
+      //   }).start();
+      // }
+      
+      // console.log('Released', gs.dx);
+    },
+  });
   static propTypes = {
     initialDealData: PropTypes.object.isRequired,
     //Erik - 5/2/2018 PropTypes.Shape would be more specific
@@ -15,6 +47,7 @@ class DealDetail extends Component {
   
   state = {
     deal: this.props.initialDealData,
+    imageIndex: 0,
   };
 
   async componentDidMount() {
@@ -29,7 +62,16 @@ class DealDetail extends Component {
         <TouchableOpacity onPress={this.props.onBack}>
           <Text style={styles.backLink}>Back</Text>
         </TouchableOpacity>
-        <Image source={{ uri: deal.media[0] }} style={styles.image} />
+        <Animated.Image 
+          //Erik - 5/4/2018 This means spread the panHandlers (callback methods) in component
+          {...this.imagePanResponder.panHandlers}
+          source={{ uri: deal.media[this.state.imageIndex] }} 
+          style={[{ left: this.imageXPosition}, styles.image]} />
+        {/* <Image 
+          //Erik - 5/4/2018 This means spread the panHandlers (callback methods) in component
+          {...this.imagePanResponder.panHandlers}
+          source={{ uri: deal.media[this.state.imageIndex] }} 
+          style={styles.image} /> */}
         <View style={styles.detail}>
           <View>
             <Text style={styles.title}>{deal.title}</Text>
