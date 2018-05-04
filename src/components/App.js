@@ -65,12 +65,34 @@ currentDeal = () => {
 unsetCurrentDeal = () => {
   this.setState({currentDealId: null});
 };
+
+setNextDeal = (indexIncrement) => {
+  let nextIndex = 0;
+  let nextDealId = this.state.currentDealId;
+  if(this.state.dealsFromSearch.length > 0 ) {
+    nextIndex = this.state.dealsFromSearch.map(function(e) { return e.key; }).indexOf(this.state.currentDealId) + indexIncrement;
+    nextDealId = (nextIndex >= 0 && nextIndex < this.state.dealsFromSearch.length)? this.state.dealsFromSearch[nextIndex].key : this.state.currentDealId;
+  } else {
+    nextIndex = this.state.deals.map(function(e) { return e.key; }).indexOf(this.state.currentDealId) + indexIncrement;
+    nextDealId = (nextIndex >= 0 && nextIndex < this.state.deals.length)? this.state.deals[nextIndex].key : this.state.currentDealId;
+  }
+  
+  if(nextDealId !== this.state.currentDealId)
+  {
+    this.setCurrentDeal(nextDealId);
+  }
+  return nextDealId;
+}
+
 render() {
   if(this.state.currentDealId) {
     
     return (
       <View style={styles.main}>
-        <DealDetail initialDealData={this.currentDeal()}  onBack={this.unsetCurrentDeal}/>
+        <DealDetail key = {this.state.currentDealId}
+          initialDealData={this.currentDeal()}  
+          onBack={this.unsetCurrentDeal} 
+          onSwipe={this.setNextDeal}/>
       </View>
     );
   }

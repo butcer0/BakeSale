@@ -6,10 +6,26 @@ import { priceDisplay } from '../util';
 import ajax from '../ajax';
 
 const SWIPE_THRESHOLD = 0.4;
+const SWIPE_DETAIL_ELASTICITY = 0.4;
 
 class DealDetail extends Component {
   imageXPosition = new Animated.Value(0);
+  detailXPosition = new Animated.Value(0);
   width = 0;
+
+  static propTypes = {
+    initialDealData: PropTypes.object.isRequired,
+    //Erik - 5/2/2018 PropTypes.Shape would be more specific
+    // deal: PropTypes.shape.isRequired,
+    onBack: PropTypes.func.isRequired,
+    onSwipe: PropTypes.func.isRequired,
+  };
+  
+  state = {
+    deal: this.props.initialDealData,
+    imageIndex: 0,
+  };
+
   imagePanResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gs) => {
@@ -65,17 +81,51 @@ class DealDetail extends Component {
     
   }
 
-  static propTypes = {
-    initialDealData: PropTypes.object.isRequired,
-    //Erik - 5/2/2018 PropTypes.Shape would be more specific
-    // deal: PropTypes.shape.isRequired,
-    onBack: PropTypes.func.isRequired,
-  };
-  
-  state = {
-    deal: this.props.initialDealData,
-    imageIndex: 0,
-  };
+  detailPanResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (evt, gs) => {
+      this.detailXPosition.setValue(gs.dx * SWIPE_DETAIL_ELASTICITY);
+      // console.log('Moving', gs.dx);
+    },
+    onPanResponderRelease: (evt, gs) => {
+      console.log('Detail Released');
+      this.width = Dimensions.get('window').width;      
+      if(Math.abs(gs.dx) > this.width * SWIPE_THRESHOLD)
+      {
+      // Swipe left or right
+        const direction = Math.sign(gs.dx);
+        // -1 for left, 1 for right
+        Animated.timing(this.detailXPosition, {
+          toValue: direction * this.width,
+          duration: 250,
+        }).start(() => this.handleDetailSwipe(-1 * direction));
+      } else {
+        Animated.spring(this.detailXPosition, {
+          toValue: 0,
+          duration: 100,
+        }).start();
+      }
+
+    },
+  });
+
+  handleDetailSwipe = (indexDirection) => {
+    console.log('handle Detail Swipe Called: ' + indexDirection);
+    if(this.props.onSwipe(indexDirection) === this.state.deal.key)
+    {
+      Animated.spring(this.detailXPosition, {
+        toValue: 0,
+      }).start();
+      return;
+    } else {
+      // Next image animation
+      this.detailXPosition.setValue(indexDirection * this.width);
+      Animated.spring(this.detailXPosition, {
+        toValue: 0,
+      }).start();
+    }
+  }
+
 
   async componentDidMount() {
     const fullDeal = await ajax.fetchDealDetail(this.state.deal.key);
@@ -99,7 +149,9 @@ class DealDetail extends Component {
           {...this.imagePanResponder.panHandlers}
           source={{ uri: deal.media[this.state.imageIndex] }} 
           style={styles.image} /> */}
-        <View style={styles.detail}>
+        <Animated.View 
+          {...this.detailPanResponder.panHandlers}
+          style={[{ left: this.detailXPosition}, styles.detail]} >
           <View>
             <Text style={styles.title}>{deal.title}</Text>
           </View>
@@ -118,7 +170,28 @@ class DealDetail extends Component {
           <View style={styles.description}>
             <Text>{deal.description}</Text>
           </View>
-        </View>
+        </Animated.View>
+     
+        {/* <View style={styles.detail}>
+          <View>
+            <Text style={styles.title}>{deal.title}</Text>
+          </View>
+          <View style={styles.footer}>
+            <View style={styles.info}>
+              <Text style={styles.price}>{priceDisplay(deal.price)}</Text>
+              <Text style={styles.cause}>{deal.cause.name}</Text>
+            </View>
+            {deal.user &&(
+              <View style={styles.user}>
+                <Image source={{ uri: deal.user.avatar }} style={styles.avatar} />
+                <Text>{deal.user.name}</Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.description}>
+            <Text>{deal.description}</Text>
+          </View>
+        </View> */}
       </View>
     );
   }
